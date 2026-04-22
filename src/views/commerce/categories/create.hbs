@@ -30,6 +30,18 @@
             />
           </div>
 
+          <div class="mb-3">
+            <label for="description" class="form-label">Descripcion</label>
+            <textarea
+              class="form-control"
+              id="description"
+              name="description"
+              rows="3"
+              placeholder="Describe la categoria"
+              required
+            >{{formData.description}}</textarea>
+          </div>
+
           <div class="d-grid">
             <button type="submit" class="btn btn-warning fw-semibold">Guardar categoria</button>
           </div>

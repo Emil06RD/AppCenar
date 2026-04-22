@@ -10,6 +10,7 @@ const {
   handleValidationErrors,
 } = require('../middlewares/validationMiddleware');
 const { redirectIfAuthenticated } = require('../middlewares/authMiddleware');
+const upload = require('../middlewares/uploadMiddleware');
 
 // -- Login (bloquea acceso si ya hay sesión) -----------------------------------
 router.get('/login',  redirectIfAuthenticated, authController.getLogin);
@@ -31,6 +32,7 @@ router.post(
 router.get('/register-commerce',  redirectIfAuthenticated, authController.getRegisterCommerce);
 router.post(
   '/register-commerce',
+  upload.fields([{ name: 'logo', maxCount: 1 }]),
   registerCommerceRules,
   handleValidationErrors('/auth/register-commerce'),
   authController.postRegisterCommerce

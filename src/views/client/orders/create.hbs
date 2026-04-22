@@ -32,14 +32,13 @@
                           <h3 class="h6 fw-semibold mb-0">{{this.name}}</h3>
                           <span class="badge text-bg-light">{{this.category.name}}</span>
                         </div>
-                        <p class="text-muted small mb-2">
+                        <p class="text-muted small mb-0">
                           {{#if this.description}}
                             {{this.description}}
                           {{else}}
                             Sin descripcion disponible.
                           {{/if}}
                         </p>
-                        <div class="small text-muted">Stock disponible: {{this.stock}}</div>
                       </div>
 
                       <div class="d-flex flex-column align-items-md-end gap-2">
@@ -50,7 +49,6 @@
                           id="qty-{{this._id}}"
                           name="quantities[{{this._id}}]"
                           min="0"
-                          max="{{this.stock}}"
                           value="0"
                           class="form-control"
                           style="width: 96px;"
@@ -78,12 +76,12 @@
                         type="radio"
                         name="addressId"
                         value="{{this._id}}"
-                        {{#if this.isDefault}}checked{{/if}}
                         required
                       />
                       <span class="form-check-label">
-                        <span class="fw-semibold d-block">{{this.street}}</span>
-                        <span class="text-muted d-block">{{this.city}}</span>
+                        <span class="fw-semibold d-block">{{this.label}}</span>
+                        <span class="text-muted d-block">{{this.street}}</span>
+                        <span class="text-muted d-block">{{this.sector}}, {{this.city}}</span>
                         {{#if this.reference}}
                           <span class="small text-muted d-block">Referencia: {{this.reference}}</span>
                         {{/if}}
@@ -100,7 +98,7 @@
               <h2 class="h5 fw-semibold mb-3">Resumen</h2>
               <p class="text-muted small mb-2">El pedido debe contener al menos un producto.</p>
               <p class="text-muted small mb-2">Todos los productos pertenecen a un solo comercio.</p>
-              <p class="text-muted small mb-3">ITBIS aplicado: {{itbisPercent}}%</p>
+              <p class="text-muted small mb-3">El total final se calcula con el ITBIS vigente desde la API.</p>
 
               <div class="d-grid">
                 <button type="submit" class="btn btn-warning fw-semibold">Confirmar pedido</button>
@@ -115,7 +113,7 @@
       <div class="card-body text-center py-5">
         <i class="bi bi-basket display-5 text-muted d-block mb-3"></i>
         <h2 class="h5 fw-semibold">No hay productos disponibles</h2>
-        <p class="text-muted mb-0">Este comercio no tiene productos con stock por ahora.</p>
+        <p class="text-muted mb-0">Este comercio no tiene productos activos por ahora.</p>
       </div>
     </div>
   {{/if}}

@@ -36,7 +36,9 @@
         />
       </div>
       <div class="col-12 col-md-3 d-grid">
-        <button type="submit" class="btn btn-warning fw-semibold">Buscar</button>
+        <button type="submit" class="btn btn-warning fw-semibold">
+          <i class="bi bi-search me-1"></i>Buscar
+        </button>
       </div>
     </form>
   </div>
@@ -59,17 +61,21 @@
             <p class="text-muted small mb-3">Horario: {{this.openingTime}} - {{this.closingTime}}</p>
             <div class="d-flex gap-2 mt-auto">
               <a href="/client/commerces/{{this._id}}/products" class="btn btn-outline-warning flex-grow-1">
-                Ver productos
+                <i class="bi bi-basket me-1"></i>Ver productos
               </a>
               {{#if this.isFavorite}}
                 <form action="/client/favorites/remove" method="POST">
                   <input type="hidden" name="commerceId" value="{{this._id}}" />
-                  <button type="submit" class="btn btn-outline-danger">Quitar</button>
+                  <button type="submit" class="btn btn-outline-danger">
+                    <i class="bi bi-heartbreak"></i>
+                  </button>
                 </form>
               {{else}}
                 <form action="/client/favorites" method="POST">
                   <input type="hidden" name="commerceId" value="{{this._id}}" />
-                  <button type="submit" class="btn btn-warning">Favorito</button>
+                  <button type="submit" class="btn btn-warning">
+                    <i class="bi bi-heart"></i>
+                  </button>
                 </form>
               {{/if}}
             </div>
@@ -80,9 +86,9 @@
   {{else}}
     <div class="col-12">
       <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-          <i class="bi bi-search display-5 text-muted d-block mb-3"></i>
-          <h2 class="h5 fw-semibold">No se encontraron comercios</h2>
+        <div class="empty-state">
+          <i class="bi bi-search"></i>
+          <h2 class="h5 fw-semibold">No hay datos disponibles</h2>
           <p class="text-muted mb-0">Prueba con otro nombre o cambia el tipo seleccionado.</p>
         </div>
       </div>

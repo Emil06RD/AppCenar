@@ -13,6 +13,6 @@ router.get('/create', categoryController.getCreateCategoryForm);
 router.post('/', categoryRules, handleValidationErrors('/commerce/categories/create'), categoryController.createCategory);
 router.get('/edit/:id', mongoIdParamRule(), handleValidationErrors('/commerce/categories'), categoryController.getEditCategoryForm);
 router.post('/edit/:id', mongoIdParamRule(), categoryRules, handleValidationErrors((req) => `/commerce/categories/edit/${req.params.id}`), categoryController.updateCategory);
-router.post('/toggle/:id', mongoIdParamRule(), handleValidationErrors('/commerce/categories'), categoryController.toggleCategoryStatus);
+router.post('/delete/:id', mongoIdParamRule(), handleValidationErrors('/commerce/categories'), categoryController.deleteCategory);
 
 module.exports = router;

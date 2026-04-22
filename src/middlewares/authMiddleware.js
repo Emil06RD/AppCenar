@@ -1,26 +1,33 @@
-// ── isAuthenticated ───────────────────────────────────────────────────────────
-// Protege cualquier ruta: si no hay sesión, redirige al login.
 const isAuthenticated = (req, res, next) => {
-  if (req.session && req.session.userId) {
+  if (req.session && req.session.userId && req.session.authToken) {
     return next();
   }
-  req.flash('error', 'Debes iniciar sesión para acceder a esta página.');
+
+  if (req.session) {
+    delete req.session.userId;
+    delete req.session.role;
+    delete req.session.userName;
+    delete req.session.authToken;
+    delete req.session.authUser;
+    delete req.session.authExpiresAt;
+  }
+
+  req.flash('error', 'Debes iniciar sesion para acceder a esta pagina.');
   return res.redirect('/auth/login');
 };
 
-// ── redirectIfAuthenticated ───────────────────────────────────────────────────
-// Para rutas públicas (login, register): si ya hay sesión, manda al dashboard.
 const roleRedirect = {
-  client:   '/client/home',
+  client: '/client/home',
   delivery: '/delivery/home',
   commerce: '/commerce/home',
-  admin:    '/admin',
+  admin: '/admin',
 };
 
 const redirectIfAuthenticated = (req, res, next) => {
-  if (req.session && req.session.userId) {
+  if (req.session && req.session.userId && req.session.authToken) {
     return res.redirect(roleRedirect[req.session.role] || '/');
   }
+
   return next();
 };
 

@@ -3,6 +3,7 @@ const path = require('path');
 const { engine } = require('express-handlebars');
 const session = require('express-session');
 const flash = require('connect-flash');
+const { getRenderableAuthState } = require('./services/api');
 
 const indexRoutes = require('./routes/index');
 const authRoutes = require('./routes/authRoutes');
@@ -36,6 +37,8 @@ app.use((req, res, next) => {
   res.locals.formData = formData ? JSON.parse(formData) : {};
 
   res.locals.session = req.session || {};
+  const authState = getRenderableAuthState(req);
+  res.locals.authStateJson = JSON.stringify(authState).replace(/</g, '\\u003c');
   res.locals.nav = {
     isClient: req.session?.role === 'client',
     isCommerce: req.session?.role === 'commerce',

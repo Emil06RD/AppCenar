@@ -1,128 +1,95 @@
-const User = require('../models/User');
-const Commerce = require('../models/Commerce');
 const CommerceType = require('../models/CommerceType');
+const { apiRequestWithSession } = require('../services/api');
+const { handleApiPageError } = require('../utils/apiController');
 
 exports.home = async (req, res) => {
   try {
-    const commerce = await Commerce.findOne({ user: req.session.userId })
-      .populate('commerceType', 'name')
-      .lean();
+    const [accountResponse, ordersResponse] = await Promise.all([
+      apiRequestWithSession(req, '/account/me'),
+      apiRequestWithSession(req, '/orders/commerce', {
+        query: { status: 'Pending', pageSize: 5 },
+      }),
+    ]);
 
     res.render('commerce/home', {
       title: 'Mi comercio',
-      commerce,
+      commerce: accountResponse.data.commerceProfile || null,
+      pendingOrdersCount: ordersResponse.meta?.total || (ordersResponse.data || []).length,
     });
-  } catch (err) {
-    console.error(err);
-    req.flash('error', 'Error al cargar el panel del comercio');
-    res.render('commerce/home', { title: 'Mi comercio' });
+  } catch (error) {
+    return handleApiPageError(req, res, error, 'Error al cargar el panel del comercio.', '/auth/login');
   }
 };
 
 exports.profileForm = async (req, res) => {
   try {
-    const [user, commerce, commerceTypes] = await Promise.all([
-      User.findOne({ _id: req.session.userId, role: 'commerce' }).lean(),
-      Commerce.findOne({ user: req.session.userId }).lean(),
-      CommerceType.find().sort({ name: 1 }).lean(),
+    const [accountResponse, commerceTypes] = await Promise.all([
+      apiRequestWithSession(req, '/account/me'),
+      CommerceType.find({ isActive: true }).sort({ name: 1 }).lean(),
     ]);
 
-    if (!user || !commerce) {
-      req.flash('error', 'Comercio no encontrado');
-      return res.redirect('/commerce/home');
-    }
-
-    const selectedCommerceType = res.locals.formData.commerceType || commerce.commerceType?.toString();
+    const account = accountResponse.data;
+    const commerceProfile = account.commerceProfile || {};
+    const selectedCommerceType = res.locals.formData.commerceType || String(commerceProfile.commerceTypeId?._id || '');
 
     res.render('commerce/profile/edit', {
       title: 'Editar comercio',
       profile: {
-        ...user,
-        commerceName: commerce.name,
+        firstName: account.firstName,
+        lastName: account.lastName,
+        userName: account.userName,
+        email: account.email,
+        phone: account.phone,
+        commerceName: commerceProfile.name || '',
         commerceType: selectedCommerceType,
-        openingTime: commerce.openingTime,
-        closingTime: commerce.closingTime,
+        openingTime: commerceProfile.openingTime || '',
+        closingTime: commerceProfile.closingTime || '',
         ...res.locals.formData,
       },
       commerceTypes: commerceTypes.map((commerceType) => ({
         ...commerceType,
-        selected: commerceType._id.toString() === selectedCommerceType,
+        selected: String(commerceType._id) === String(selectedCommerceType),
       })),
     });
-  } catch (err) {
-    console.error(err);
-    req.flash('error', 'Error al cargar el perfil del comercio');
-    res.redirect('/commerce/home');
+  } catch (error) {
+    return handleApiPageError(req, res, error, 'Error al cargar el perfil del comercio.', '/commerce/home');
   }
 };
 
 exports.updateProfile = async (req, res) => {
   try {
-    const [user, commerce] = await Promise.all([
-      User.findOne({ _id: req.session.userId, role: 'commerce' }),
-      Commerce.findOne({ user: req.session.userId }),
-    ]);
+    const response = await apiRequestWithSession(req, '/account/me', {
+      method: 'PATCH',
+      body: {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        userName: req.body.userName,
+        email: req.body.email,
+        phone: req.body.phone,
+        commerceName: req.body.commerceName,
+        commercePhone: req.body.phone,
+        openingTime: req.body.openingTime,
+        closingTime: req.body.closingTime,
+        commerceTypeId: req.body.commerceType,
+        description: '',
+      },
+    });
 
-    if (!user || !commerce) {
-      req.flash('error', 'Comercio no encontrado');
-      return res.redirect('/commerce/home');
-    }
+    req.session.userName = response.data.userName;
+    req.session.authUser = {
+      ...(req.session.authUser || {}),
+      firstName: response.data.firstName,
+      lastName: response.data.lastName,
+      userName: response.data.userName,
+      email: response.data.email,
+      phone: response.data.phone,
+      commerceProfile: response.data.commerceProfile,
+    };
 
-    const {
-      firstName,
-      lastName,
-      userName,
-      email,
-      phone,
-      commerceName,
-      commerceType,
-      openingTime,
-      closingTime,
-    } = req.body;
-
-    const normalizedUserName = userName.trim().toLowerCase();
-    const normalizedEmail = email.trim().toLowerCase();
-
-    const [existingUserName, existingEmail, validCommerceType] = await Promise.all([
-      User.findOne({ _id: { $ne: user._id }, userName: normalizedUserName }).lean(),
-      User.findOne({ _id: { $ne: user._id }, email: normalizedEmail }).lean(),
-      CommerceType.findById(commerceType).lean(),
-    ]);
-
-    if (existingUserName) {
-      req.flash('error', 'Ese nombre de usuario ya esta en uso');
-      return res.redirect('/commerce/profile');
-    }
-
-    if (existingEmail) {
-      req.flash('error', 'Ya existe una cuenta con ese email');
-      return res.redirect('/commerce/profile');
-    }
-
-    if (!validCommerceType) {
-      req.flash('error', 'El tipo de comercio seleccionado no es valido');
-      return res.redirect('/commerce/profile');
-    }
-
-    user.firstName = firstName.trim();
-    user.lastName = lastName.trim();
-    user.userName = normalizedUserName;
-    user.email = normalizedEmail;
-    user.phone = phone.trim();
-
-    commerce.name = commerceName.trim();
-    commerce.commerceType = validCommerceType._id;
-    commerce.openingTime = openingTime.trim();
-    commerce.closingTime = closingTime.trim();
-
-    await Promise.all([user.save(), commerce.save()]);
-
-    req.session.userName = user.userName;
-    req.flash('success', 'Perfil del comercio actualizado correctamente');
-    res.redirect('/commerce/profile');
-  } catch (err) {
-    console.error(err);
-    req.flash('error', 'Error al actualizar el comercio');
-    res.redirect('/commerce/profile');
+    req.flash('success', response.message || 'Perfil del comercio actualizado correctamente.');
+    return res.redirect('/commerce/profile');
+  } catch (error) {
+    req.flash('formData', JSON.stringify(req.body));
+    return handleApiPageError(req, res, error, 'Error al actualizar el comercio.', '/commerce/profile');
   }
 };

@@ -29,7 +29,11 @@
           </div>
 
           <div class="small text-muted mb-3">
-            Entrega en: {{this.address.street}}, {{this.address.city}}
+            {{#if this.address}}
+              Entrega en: {{this.address.street}}, {{this.address.city}}
+            {{else}}
+              Direccion no disponible
+            {{/if}}
           </div>
 
           <ul class="list-group list-group-flush">

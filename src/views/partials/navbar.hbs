@@ -1,63 +1,74 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="/">
-      <i class="bi bi-bowl-hot-fill me-1 text-warning"></i> AppCenar
+<nav class="navbar navbar-expand-lg app-navbar sticky-top">
+  <div class="container app-container">
+    <a class="navbar-brand app-brand" href="/">
+      <span class="app-brand-mark">
+        <i class="bi bi-bowl-hot-fill"></i>
+      </span>
+      <span>AppCenar</span>
     </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+    <button class="navbar-toggler app-navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-label="Abrir navegacion">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navMain">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav me-auto mb-3 mb-lg-0 app-nav-links">
         {{#if session.userId}}
           {{#if nav.isClient}}
-            <li class="nav-item"><a class="nav-link" href="/client/home">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="/client/orders">Orders</a></li>
-            <li class="nav-item"><a class="nav-link" href="/client/addresses">Addresses</a></li>
-            <li class="nav-item"><a class="nav-link" href="/client/favorites">Favorites</a></li>
-            <li class="nav-item"><a class="nav-link" href="/client/profile">Profile</a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/client/home"><i class="bi bi-house-door"></i><span>Inicio</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/client/orders"><i class="bi bi-receipt"></i><span>Pedidos</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/client/addresses"><i class="bi bi-geo-alt"></i><span>Direcciones</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/client/favorites"><i class="bi bi-heart"></i><span>Favoritos</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/client/profile"><i class="bi bi-person"></i><span>Perfil</span></a></li>
           {{/if}}
 
           {{#if nav.isCommerce}}
-            <li class="nav-item"><a class="nav-link" href="/commerce/categories">Categories</a></li>
-            <li class="nav-item"><a class="nav-link" href="/commerce/products">Products</a></li>
-            <li class="nav-item"><a class="nav-link" href="/commerce/orders">Orders</a></li>
-            <li class="nav-item"><a class="nav-link" href="/commerce/profile">Profile</a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/commerce/categories"><i class="bi bi-grid"></i><span>Categorias</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/commerce/products"><i class="bi bi-box-seam"></i><span>Productos</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/commerce/orders"><i class="bi bi-receipt"></i><span>Pedidos</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/commerce/profile"><i class="bi bi-shop"></i><span>Perfil</span></a></li>
           {{/if}}
 
           {{#if nav.isDelivery}}
-            <li class="nav-item"><a class="nav-link" href="/delivery/orders">Orders</a></li>
-            <li class="nav-item"><a class="nav-link" href="/delivery/profile">Profile</a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/delivery/orders"><i class="bi bi-bicycle"></i><span>Pedidos</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/delivery/profile"><i class="bi bi-person"></i><span>Perfil</span></a></li>
           {{/if}}
 
           {{#if nav.isAdmin}}
-            <li class="nav-item"><a class="nav-link" href="/admin">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="/admin/users">Users</a></li>
-            <li class="nav-item"><a class="nav-link" href="/admin/administrators">Admins</a></li>
-            <li class="nav-item"><a class="nav-link" href="/admin/configuration">Config</a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/admin"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/admin/users"><i class="bi bi-people"></i><span>Usuarios</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/admin/administrators"><i class="bi bi-person-badge"></i><span>Admins</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-nav-link href="/admin/configuration"><i class="bi bi-gear"></i><span>Config</span></a></li>
           {{/if}}
         {{/if}}
       </ul>
 
-      <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-2 app-nav-actions">
         {{#if session.userId}}
           <li class="nav-item">
-            <span class="nav-link text-warning fw-semibold">
-              <i class="bi bi-person-fill me-1"></i>{{session.userName}}
+            <span class="nav-link app-user-pill">
+              <i class="bi bi-person-circle"></i>
+              <span>{{session.userName}}</span>
             </span>
           </li>
           <li class="nav-item">
-            <a class="btn btn-outline-warning btn-sm" href="/auth/logout">
-              <i class="bi bi-box-arrow-right me-1"></i>Cerrar sesion
+            <a class="btn btn-outline-light btn-sm app-btn-ghost" href="/auth/logout">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Cerrar sesion</span>
             </a>
           </li>
         {{else}}
           <li class="nav-item">
-            <a class="nav-link" href="/auth/login">Iniciar sesion</a>
+            <a class="nav-link" data-nav-link href="/auth/login">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span>Iniciar sesion</span>
+            </a>
           </li>
           <li class="nav-item">
-            <a class="btn btn-warning btn-sm fw-semibold" href="/auth/register-user">Registrarse</a>
+            <a class="btn btn-warning btn-sm fw-semibold app-btn-primary" href="/auth/register-user">
+              <i class="bi bi-person-plus"></i>
+              <span>Registrarse</span>
+            </a>
           </li>
         {{/if}}
       </ul>

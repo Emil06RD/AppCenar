@@ -1,16 +1,17 @@
 <div class="row justify-content-center">
   <div class="col-12 col-sm-10 col-md-6 col-lg-5">
+    <div class="card border-0 auth-card mt-4">
+      <div class="card-body">
+        <div class="text-center mb-3">
+          <span class="app-pill"><i class="bi bi-box-arrow-in-right"></i>Acceso seguro</span>
+        </div>
 
-    <div class="card shadow-sm mt-5">
-      <div class="card-body p-4">
-
-        <h2 class="card-title text-center mb-1 fw-bold">Iniciar sesión</h2>
+        <h2 class="card-title text-center mb-1 fw-bold">Iniciar sesion</h2>
         <p class="text-center text-muted mb-4 small">Bienvenido de nuevo a AppCenar</p>
 
         {{> alerts}}
 
         <form action="/auth/login" method="POST" novalidate>
-
           <div class="mb-3">
             <label for="identifier" class="form-label">Email o nombre de usuario</label>
             <input
@@ -18,7 +19,7 @@
               class="form-control"
               id="identifier"
               name="identifier"
-              placeholder="tucorreo@ejemplo.com  o  @usuario"
+              placeholder="tucorreo@ejemplo.com o @usuario"
               value="{{formData.identifier}}"
               autocomplete="username"
               required
@@ -26,13 +27,13 @@
           </div>
 
           <div class="mb-3">
-            <label for="password" class="form-label">Contraseña</label>
+            <label for="password" class="form-label">Contrasena</label>
             <input
               type="password"
               class="form-control"
               id="password"
               name="password"
-              placeholder="••••••••"
+              placeholder="Tu contrasena"
               autocomplete="current-password"
               required
             />
@@ -43,26 +44,25 @@
               <input class="form-check-input" type="checkbox" id="remember" name="remember" />
               <label class="form-check-label small" for="remember">Recordarme</label>
             </div>
-            <a href="/auth/forgot-password" class="small text-decoration-none">¿Olvidaste tu contraseña?</a>
+            <a href="/auth/forgot-password" class="small text-decoration-none">Olvide mi contrasena</a>
           </div>
 
           <div class="d-grid">
-            <button type="submit" class="btn btn-warning fw-semibold">Ingresar</button>
+            <button type="submit" class="btn btn-warning fw-semibold">
+              <i class="bi bi-door-open me-1"></i>Ingresar
+            </button>
           </div>
-
         </form>
 
         <hr />
 
         <p class="text-center small mb-0">
           ¿No tienes cuenta?
-          <a href="/auth/register-user" class="text-decoration-none fw-semibold">Regístrate como cliente</a>
+          <a href="/auth/register-user" class="text-decoration-none fw-semibold">Registrate como cliente</a>
           &nbsp;·&nbsp;
           <a href="/auth/register-commerce" class="text-decoration-none fw-semibold">Registrar comercio</a>
         </p>
-
       </div>
     </div>
-
   </div>
 </div>

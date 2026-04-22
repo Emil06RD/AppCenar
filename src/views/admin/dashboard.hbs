@@ -15,20 +15,6 @@
 <div class="row g-3 mb-4">
   <div class="col-6 col-md-3">
     <div class="card border-0 bg-warning bg-opacity-10 text-center p-3">
-      <i class="bi bi-people fs-2 text-warning"></i>
-      <div class="fw-bold fs-4 mt-1">{{stats.totalUsers}}</div>
-      <div class="text-muted small">Usuarios</div>
-    </div>
-  </div>
-  <div class="col-6 col-md-3">
-    <div class="card border-0 bg-warning bg-opacity-10 text-center p-3">
-      <i class="bi bi-shop fs-2 text-warning"></i>
-      <div class="fw-bold fs-4 mt-1">{{stats.totalCommerces}}</div>
-      <div class="text-muted small">Comercios</div>
-    </div>
-  </div>
-  <div class="col-6 col-md-3">
-    <div class="card border-0 bg-warning bg-opacity-10 text-center p-3">
       <i class="bi bi-bag-check fs-2 text-warning"></i>
       <div class="fw-bold fs-4 mt-1">{{stats.totalOrders}}</div>
       <div class="text-muted small">Pedidos</div>
@@ -36,9 +22,47 @@
   </div>
   <div class="col-6 col-md-3">
     <div class="card border-0 bg-warning bg-opacity-10 text-center p-3">
-      <i class="bi bi-hourglass-split fs-2 text-warning"></i>
-      <div class="fw-bold fs-4 mt-1">{{stats.pendingCommerces}}</div>
-      <div class="text-muted small">Comercios pendientes</div>
+      <i class="bi bi-calendar-check fs-2 text-warning"></i>
+      <div class="fw-bold fs-4 mt-1">{{stats.ordersToday}}</div>
+      <div class="text-muted small">Pedidos hoy</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-0 bg-warning bg-opacity-10 text-center p-3">
+      <i class="bi bi-shop fs-2 text-warning"></i>
+      <div class="fw-bold fs-4 mt-1">{{stats.activeCommerces}}</div>
+      <div class="text-muted small">Comercios activos</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-0 bg-warning bg-opacity-10 text-center p-3">
+      <i class="bi bi-box-seam fs-2 text-warning"></i>
+      <div class="fw-bold fs-4 mt-1">{{stats.totalProducts}}</div>
+      <div class="text-muted small">Productos</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-12 col-md-4">
+    <div class="card border-0 shadow-sm p-3 h-100">
+      <h2 class="h6 fw-bold mb-3">Estado de comercios</h2>
+      <div class="d-flex justify-content-between"><span>Activos</span><strong>{{stats.activeCommerces}}</strong></div>
+      <div class="d-flex justify-content-between"><span>Inactivos</span><strong>{{stats.inactiveCommerces}}</strong></div>
+    </div>
+  </div>
+  <div class="col-12 col-md-4">
+    <div class="card border-0 shadow-sm p-3 h-100">
+      <h2 class="h6 fw-bold mb-3">Estado de clientes</h2>
+      <div class="d-flex justify-content-between"><span>Activos</span><strong>{{stats.activeClients}}</strong></div>
+      <div class="d-flex justify-content-between"><span>Inactivos</span><strong>{{stats.inactiveClients}}</strong></div>
+    </div>
+  </div>
+  <div class="col-12 col-md-4">
+    <div class="card border-0 shadow-sm p-3 h-100">
+      <h2 class="h6 fw-bold mb-3">Estado de deliveries</h2>
+      <div class="d-flex justify-content-between"><span>Activos</span><strong>{{stats.activeDeliveries}}</strong></div>
+      <div class="d-flex justify-content-between"><span>Inactivos</span><strong>{{stats.inactiveDeliveries}}</strong></div>
     </div>
   </div>
 </div>
@@ -49,7 +73,7 @@
       <div class="card-body">
         <i class="bi bi-people display-4 text-warning mb-3 d-block"></i>
         <h5 class="fw-semibold">Gestion de usuarios</h5>
-        <p class="text-muted small">Ver, activar, desactivar y aprobar comercios.</p>
+        <p class="text-muted small">Ver y cambiar el estado de los usuarios por rol.</p>
         <a href="/admin/users" class="btn btn-warning btn-sm fw-semibold mt-2">Gestionar</a>
       </div>
     </div>
@@ -60,7 +84,7 @@
       <div class="card-body">
         <i class="bi bi-person-badge display-4 text-warning mb-3 d-block"></i>
         <h5 class="fw-semibold">Administradores</h5>
-        <p class="text-muted small">Crea, edita o elimina cuentas administrativas.</p>
+        <p class="text-muted small">Crear y editar cuentas administrativas.</p>
         <a href="/admin/administrators" class="btn btn-warning btn-sm fw-semibold mt-2">Gestionar</a>
       </div>
     </div>
@@ -71,7 +95,7 @@
       <div class="card-body">
         <i class="bi bi-tags display-4 text-warning mb-3 d-block"></i>
         <h5 class="fw-semibold">Tipos de comercio</h5>
-        <p class="text-muted small">Crear, editar y eliminar los tipos de comercio disponibles.</p>
+        <p class="text-muted small">Crear, editar y eliminar los tipos disponibles.</p>
         <a href="/admin/commerce-types" class="btn btn-warning btn-sm fw-semibold mt-2">Gestionar</a>
       </div>
     </div>

@@ -18,28 +18,29 @@
 
         <form action="/client/addresses/create" method="POST">
           <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label for="label" class="form-label">Etiqueta</label>
+              <input type="text" id="label" name="label" class="form-control" value="{{formData.label}}" placeholder="Casa, trabajo..." required />
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="sector" class="form-label">Sector</label>
+              <input type="text" id="sector" name="sector" class="form-control" value="{{formData.sector}}" required />
+            </div>
+
             <div class="col-12">
               <label for="street" class="form-label">Calle</label>
-              <input type="text" id="street" name="street" class="form-control" required />
+              <input type="text" id="street" name="street" class="form-control" value="{{formData.street}}" required />
             </div>
 
             <div class="col-12">
               <label for="city" class="form-label">Ciudad</label>
-              <input type="text" id="city" name="city" class="form-control" required />
+              <input type="text" id="city" name="city" class="form-control" value="{{formData.city}}" required />
             </div>
 
             <div class="col-12">
               <label for="reference" class="form-label">Referencia</label>
-              <textarea id="reference" name="reference" class="form-control" rows="3"></textarea>
-            </div>
-
-            <div class="col-12">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="isDefault" name="isDefault" />
-                <label class="form-check-label" for="isDefault">
-                  Marcar como direccion predeterminada
-                </label>
-              </div>
+              <textarea id="reference" name="reference" class="form-control" rows="3" required>{{formData.reference}}</textarea>
             </div>
           </div>
 

@@ -1,117 +1,79 @@
-const User = require('../models/User');
-const Order = require('../models/Order');
+const { apiRequestWithSession } = require('../services/api');
+const { handleApiPageError } = require('../utils/apiController');
 
 exports.home = async (req, res) => {
   try {
-    const activeOrder = await Order.findOne({
-      delivery: req.session.userId,
-      status: 'in_process',
-    })
-      .populate('client', 'firstName lastName')
-      .lean();
-
-    const user = await User.findOne({ _id: req.session.userId, role: 'delivery' }).lean();
+    const [accountResponse, ordersResponse] = await Promise.all([
+      apiRequestWithSession(req, '/account/me'),
+      apiRequestWithSession(req, '/orders/delivery', {
+        query: { status: 'InProgress', pageSize: 1 },
+      }),
+    ]);
 
     res.render('delivery/home', {
       title: 'Mis entregas',
-      delivery: user,
-      activeOrder,
+      delivery: accountResponse.data,
+      activeOrder: (ordersResponse.data || [])[0] || null,
     });
-  } catch (err) {
-    console.error(err);
-    req.flash('error', 'Error al cargar el panel del delivery');
-    res.render('delivery/home', { title: 'Mis entregas' });
+  } catch (error) {
+    return handleApiPageError(req, res, error, 'Error al cargar el panel del delivery.', '/auth/login');
   }
 };
 
 exports.profileForm = async (req, res) => {
   try {
-    const user = await User.findOne({ _id: req.session.userId, role: 'delivery' }).lean();
-    if (!user) {
-      req.flash('error', 'Repartidor no encontrado');
-      return res.redirect('/delivery/home');
-    }
+    const response = await apiRequestWithSession(req, '/account/me');
+    const account = response.data;
 
     res.render('delivery/profile/edit', {
       title: 'Mi perfil',
       profile: {
-        ...user,
+        firstName: account.firstName,
+        lastName: account.lastName,
+        userName: account.userName,
+        email: account.email,
+        phone: account.phone,
         ...res.locals.formData,
       },
     });
-  } catch (err) {
-    console.error(err);
-    req.flash('error', 'Error al cargar el perfil');
-    res.redirect('/delivery/home');
+  } catch (error) {
+    return handleApiPageError(req, res, error, 'Error al cargar el perfil.', '/delivery/home');
   }
 };
 
 exports.updateProfile = async (req, res) => {
   try {
-    const user = await User.findOne({ _id: req.session.userId, role: 'delivery' });
-    if (!user) {
-      req.flash('error', 'Repartidor no encontrado');
-      return res.redirect('/delivery/home');
-    }
+    const response = await apiRequestWithSession(req, '/account/me', {
+      method: 'PATCH',
+      body: {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        userName: req.body.userName,
+        email: req.body.email,
+        phone: req.body.phone,
+      },
+    });
 
-    const { firstName, lastName, userName, email, phone } = req.body;
-    const normalizedUserName = userName.trim().toLowerCase();
-    const normalizedEmail = email.trim().toLowerCase();
+    req.session.userName = response.data.userName;
+    req.session.authUser = {
+      ...(req.session.authUser || {}),
+      firstName: response.data.firstName,
+      lastName: response.data.lastName,
+      userName: response.data.userName,
+      email: response.data.email,
+      phone: response.data.phone,
+      isAvailable: response.data.isAvailable,
+    };
 
-    const [existingUserName, existingEmail] = await Promise.all([
-      User.findOne({ _id: { $ne: user._id }, userName: normalizedUserName }).lean(),
-      User.findOne({ _id: { $ne: user._id }, email: normalizedEmail }).lean(),
-    ]);
-
-    if (existingUserName) {
-      req.flash('error', 'Ese nombre de usuario ya esta en uso');
-      return res.redirect('/delivery/profile');
-    }
-
-    if (existingEmail) {
-      req.flash('error', 'Ya existe una cuenta con ese email');
-      return res.redirect('/delivery/profile');
-    }
-
-    user.firstName = firstName.trim();
-    user.lastName = lastName.trim();
-    user.userName = normalizedUserName;
-    user.email = normalizedEmail;
-    user.phone = phone.trim();
-    await user.save();
-
-    req.session.userName = user.userName;
-    req.flash('success', 'Perfil actualizado correctamente');
-    res.redirect('/delivery/profile');
-  } catch (err) {
-    console.error(err);
-    req.flash('error', 'Error al actualizar el perfil');
-    res.redirect('/delivery/profile');
+    req.flash('success', response.message || 'Perfil actualizado correctamente.');
+    return res.redirect('/delivery/profile');
+  } catch (error) {
+    req.flash('formData', JSON.stringify(req.body));
+    return handleApiPageError(req, res, error, 'Error al actualizar el perfil.', '/delivery/profile');
   }
 };
 
 exports.toggleAvailability = async (req, res) => {
-  try {
-    const user = await User.findOne({ _id: req.session.userId, role: 'delivery' });
-    if (!user) {
-      req.flash('error', 'Repartidor no encontrado');
-      return res.redirect('/delivery/home');
-    }
-
-    const activeOrder = await Order.exists({ delivery: user._id, status: 'in_process' });
-    if (activeOrder) {
-      req.flash('error', 'No puedes cambiar tu disponibilidad mientras tienes un pedido en proceso');
-      return res.redirect('/delivery/home');
-    }
-
-    user.isAvailable = !user.isAvailable;
-    await user.save();
-
-    req.flash('success', `Disponibilidad ${user.isAvailable ? 'activada' : 'desactivada'} correctamente`);
-    res.redirect('/delivery/home');
-  } catch (err) {
-    console.error(err);
-    req.flash('error', 'Error al cambiar la disponibilidad');
-    res.redirect('/delivery/home');
-  }
+  req.flash('error', 'La API actual no expone un endpoint para cambiar la disponibilidad manualmente.');
+  return res.redirect('/delivery/home');
 };

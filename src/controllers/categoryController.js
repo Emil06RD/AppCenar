@@ -1,22 +1,25 @@
-const Category = require('../models/Category');
+const { apiRequestWithSession } = require('../services/api');
+const { handleApiPageError, getApiErrorMessage } = require('../utils/apiController');
 
-const getCategoryByCommerce = (categoryId, commerceId) =>
-  Category.findOne({ _id: categoryId, commerce: commerceId });
+function mapCategory(category = {}) {
+  return {
+    _id: category._id || category.id,
+    name: category.name,
+    description: category.description,
+    totalProducts: category.totalProducts || 0,
+  };
+}
 
 exports.getCategoriesByCommerce = async (req, res) => {
   try {
-    const categories = await Category.find({ commerce: req.session.userId })
-      .sort({ createdAt: -1 })
-      .lean();
+    const response = await apiRequestWithSession(req, '/categories');
 
     return res.render('commerce/categories/list', {
       title: 'Mis categorias',
-      categories,
+      categories: (response.data || []).map(mapCategory),
     });
   } catch (error) {
-    console.error(error);
-    req.flash('error', 'Error al cargar las categorias');
-    return res.redirect('/commerce/home');
+    return handleApiPageError(req, res, error, 'Error al cargar las categorias.', '/commerce/home');
   }
 };
 
@@ -27,100 +30,67 @@ exports.getCreateCategoryForm = (req, res) => {
 };
 
 exports.createCategory = async (req, res) => {
-  const { name } = req.body;
-  const categoryName = name ? name.trim() : '';
-
-  if (!categoryName) {
-    req.flash('error', 'El nombre es obligatorio');
-    req.flash('formData', JSON.stringify({ name }));
-    return res.redirect('/commerce/categories/create');
-  }
-
   try {
-    await Category.create({
-      name: categoryName,
-      commerce: req.session.userId,
+    const response = await apiRequestWithSession(req, '/categories', {
+      method: 'POST',
+      body: {
+        name: req.body.name,
+        description: req.body.description,
+      },
     });
 
-    req.flash('success', 'Categoria creada correctamente');
+    req.flash('success', response.message || 'Categoria creada correctamente.');
     return res.redirect('/commerce/categories');
   } catch (error) {
-    console.error(error);
-    req.flash('error', 'Error al crear la categoria');
-    req.flash('formData', JSON.stringify({ name }));
-    return res.redirect('/commerce/categories/create');
+    req.flash('formData', JSON.stringify(req.body));
+    return handleApiPageError(req, res, error, 'Error al crear la categoria.', '/commerce/categories/create');
   }
 };
 
 exports.getEditCategoryForm = async (req, res) => {
   try {
-    const category = await getCategoryByCommerce(req.params.id, req.session.userId);
-
-    if (!category) {
-      req.flash('error', 'Categoria no encontrada');
-      return res.redirect('/commerce/categories');
-    }
+    const response = await apiRequestWithSession(req, `/categories/${req.params.id}`);
 
     return res.render('commerce/categories/edit', {
       title: 'Editar categoria',
-      category: category.toObject(),
+      category: {
+        ...mapCategory(response.data),
+        ...res.locals.formData,
+      },
     });
   } catch (error) {
-    console.error(error);
-    req.flash('error', 'Error al cargar la categoria');
-    return res.redirect('/commerce/categories');
+    return handleApiPageError(req, res, error, 'Error al cargar la categoria.', '/commerce/categories');
   }
 };
 
 exports.updateCategory = async (req, res) => {
-  const { name } = req.body;
-  const categoryName = name ? name.trim() : '';
-
-  if (!categoryName) {
-    req.flash('error', 'El nombre es obligatorio');
-    return res.redirect(`/commerce/categories/edit/${req.params.id}`);
-  }
-
   try {
-    const category = await getCategoryByCommerce(req.params.id, req.session.userId);
+    const response = await apiRequestWithSession(req, `/categories/${req.params.id}`, {
+      method: 'PUT',
+      body: {
+        name: req.body.name,
+        description: req.body.description,
+      },
+    });
 
-    if (!category) {
-      req.flash('error', 'Categoria no encontrada');
-      return res.redirect('/commerce/categories');
-    }
-
-    category.name = categoryName;
-    await category.save();
-
-    req.flash('success', 'Categoria actualizada correctamente');
+    req.flash('success', response.message || 'Categoria actualizada correctamente.');
     return res.redirect('/commerce/categories');
   } catch (error) {
-    console.error(error);
-    req.flash('error', 'Error al actualizar la categoria');
-    return res.redirect(`/commerce/categories/edit/${req.params.id}`);
+    req.flash('formData', JSON.stringify(req.body));
+    return handleApiPageError(req, res, error, 'Error al actualizar la categoria.', `/commerce/categories/edit/${req.params.id}`);
   }
 };
 
-exports.toggleCategoryStatus = async (req, res) => {
+exports.deleteCategory = async (req, res) => {
   try {
-    const category = await getCategoryByCommerce(req.params.id, req.session.userId);
+    const response = await apiRequestWithSession(req, `/categories/${req.params.id}`, {
+      method: 'DELETE',
+    });
 
-    if (!category) {
-      req.flash('error', 'Categoria no encontrada');
-      return res.redirect('/commerce/categories');
-    }
-
-    category.isActive = !category.isActive;
-    await category.save();
-
-    req.flash(
-      'success',
-      `Categoria ${category.isActive ? 'activada' : 'desactivada'} correctamente`
-    );
+    req.flash('success', response.message || 'Categoria eliminada correctamente.');
     return res.redirect('/commerce/categories');
   } catch (error) {
-    console.error(error);
-    req.flash('error', 'Error al cambiar el estado de la categoria');
+    req.flash('error', getApiErrorMessage(error, 'No se pudo eliminar la categoria.'));
     return res.redirect('/commerce/categories');
   }
 };
@@ -130,4 +100,4 @@ exports.createForm = exports.getCreateCategoryForm;
 exports.create = exports.createCategory;
 exports.editForm = exports.getEditCategoryForm;
 exports.update = exports.updateCategory;
-exports.toggle = exports.toggleCategoryStatus;
+exports.remove = exports.deleteCategory;

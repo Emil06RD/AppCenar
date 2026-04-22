@@ -5,7 +5,7 @@
         <h1 class="fw-bold mb-0">
           <i class="bi bi-pencil-square text-warning me-2"></i>Editar categoria
         </h1>
-        <p class="text-muted mb-0 small">Actualiza el nombre de la categoria</p>
+        <p class="text-muted mb-0 small">Actualiza la informacion de la categoria</p>
       </div>
       <a href="/commerce/categories" class="btn btn-outline-secondary btn-sm">
         <i class="bi bi-arrow-left me-1"></i>Volver
@@ -28,6 +28,18 @@
               placeholder="Ej: Hamburguesas"
               required
             />
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Descripcion</label>
+            <textarea
+              class="form-control"
+              id="description"
+              name="description"
+              rows="3"
+              placeholder="Describe la categoria"
+              required
+            >{{category.description}}</textarea>
           </div>
 
           <div class="d-grid">

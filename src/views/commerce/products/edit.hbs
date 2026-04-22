@@ -16,7 +16,7 @@
       <div class="card-body p-4">
         {{> alerts}}
 
-        <form action="/commerce/products/edit/{{product._id}}" method="POST" novalidate>
+        <form action="/commerce/products/edit/{{product._id}}" method="POST" enctype="multipart/form-data" novalidate>
           <div class="row g-3">
             <div class="col-12 col-md-6">
               <label for="name" class="form-label">Nombre del producto</label>
@@ -49,6 +49,7 @@
                 name="description"
                 rows="3"
                 placeholder="Describe el producto"
+                required
               >{{product.description}}</textarea>
             </div>
 
@@ -59,7 +60,7 @@
                 class="form-control"
                 id="price"
                 name="price"
-                min="0"
+                min="0.01"
                 step="0.01"
                 value="{{product.price}}"
                 required
@@ -67,17 +68,22 @@
             </div>
 
             <div class="col-12 col-md-6">
-              <label for="stock" class="form-label">Stock</label>
+              <label for="image" class="form-label">Nueva imagen</label>
               <input
-                type="number"
+                type="file"
                 class="form-control"
-                id="stock"
-                name="stock"
-                min="0"
-                step="1"
-                value="{{product.stock}}"
-                required
+                id="image"
+                name="image"
+                accept="image/*"
               />
+            </div>
+
+            <div class="col-12">
+              <label for="isActive" class="form-label">Estado</label>
+              <select class="form-select" id="isActive" name="isActive">
+                <option value="true" {{#if product.isActive}}selected{{/if}}>Activo</option>
+                <option value="false" {{#unless product.isActive}}selected{{/unless}}>Inactivo</option>
+              </select>
             </div>
           </div>
 

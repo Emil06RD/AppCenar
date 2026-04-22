@@ -17,7 +17,7 @@
         {{> alerts}}
 
         {{#if categories.length}}
-          <form action="/commerce/products" method="POST" novalidate>
+          <form action="/commerce/products" method="POST" enctype="multipart/form-data" novalidate>
             <div class="row g-3">
               <div class="col-12 col-md-6">
                 <label for="name" class="form-label">Nombre del producto</label>
@@ -50,6 +50,7 @@
                   name="description"
                   rows="3"
                   placeholder="Describe el producto"
+                  required
                 >{{formData.description}}</textarea>
               </div>
 
@@ -60,7 +61,7 @@
                   class="form-control"
                   id="price"
                   name="price"
-                  min="0"
+                  min="0.01"
                   step="0.01"
                   value="{{formData.price}}"
                   required
@@ -68,17 +69,23 @@
               </div>
 
               <div class="col-12 col-md-6">
-                <label for="stock" class="form-label">Stock</label>
+                <label for="image" class="form-label">Imagen</label>
                 <input
-                  type="number"
+                  type="file"
                   class="form-control"
-                  id="stock"
-                  name="stock"
-                  min="0"
-                  step="1"
-                  value="{{formData.stock}}"
+                  id="image"
+                  name="image"
+                  accept="image/*"
                   required
                 />
+              </div>
+
+              <div class="col-12">
+                <label for="isActive" class="form-label">Estado inicial</label>
+                <select class="form-select" id="isActive" name="isActive">
+                  <option value="true">Activo</option>
+                  <option value="false">Inactivo</option>
+                </select>
               </div>
             </div>
 
@@ -89,8 +96,8 @@
         {{else}}
           <div class="text-center py-4">
             <i class="bi bi-tags display-5 text-muted d-block mb-3"></i>
-            <h5 class="fw-semibold">Necesitas una categoria activa</h5>
-            <p class="text-muted mb-3">Antes de crear productos, registra al menos una categoria activa.</p>
+            <h5 class="fw-semibold">Necesitas una categoria</h5>
+            <p class="text-muted mb-3">Antes de crear productos, registra al menos una categoria.</p>
             <a href="/commerce/categories/create" class="btn btn-warning btn-sm fw-semibold">
               Crear categoria
             </a>

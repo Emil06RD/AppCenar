@@ -34,7 +34,11 @@
         <p class="mb-1"><strong>Total:</strong> RD$ {{order.total}}</p>
         <p class="mb-1"><strong>Subtotal:</strong> RD$ {{order.subtotal}}</p>
         <p class="mb-3"><strong>ITBIS:</strong> RD$ {{order.itbis}}</p>
-        <p class="mb-0"><strong>Entrega:</strong> {{order.address.street}}, {{order.address.city}}</p>
+        {{#if order.address}}
+          <p class="mb-0"><strong>Entrega:</strong> {{order.address.street}}, {{order.address.city}}</p>
+        {{else}}
+          <p class="mb-0"><strong>Entrega:</strong> No disponible</p>
+        {{/if}}
       </div>
     </div>
   </div>

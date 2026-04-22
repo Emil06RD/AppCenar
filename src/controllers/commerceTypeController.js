@@ -1,17 +1,29 @@
-const CommerceType = require('../models/CommerceType');
+const { apiRequestWithSession } = require('../services/api');
+const { handleApiPageError, getApiErrorMessage } = require('../utils/apiController');
+const { buildMultipartFormData } = require('../utils/multipart');
+
+function mapCommerceType(item = {}) {
+  return {
+    _id: item._id || item.id,
+    name: item.name,
+    description: item.description,
+    icon: item.icon,
+    isActive: item.isActive !== false,
+  };
+}
 
 exports.list = async (req, res) => {
   try {
-    const commerceTypes = await CommerceType.find().sort({ name: 1 }).lean();
+    const response = await apiRequestWithSession(req, '/admin/commerce-types', {
+      query: { pageSize: 100 },
+    });
 
     res.render('admin/commerce-types/list', {
       title: 'Tipos de Comercio',
-      commerceTypes,
+      commerceTypes: (response.data || []).map(mapCommerceType),
     });
   } catch (error) {
-    console.error(error);
-    req.flash('error', 'No se pudieron cargar los tipos de comercio.');
-    res.redirect('/admin');
+    return handleApiPageError(req, res, error, 'No se pudieron cargar los tipos de comercio.', '/admin');
   }
 };
 
@@ -19,134 +31,87 @@ exports.createForm = (req, res) => {
   res.render('admin/commerce-types/create', {
     title: 'Nuevo Tipo de Comercio',
     commerceType: {
-      name: '',
-      description: '',
-      isActive: true,
+      name: res.locals.formData.name || '',
+      description: res.locals.formData.description || '',
+      isActive: res.locals.formData.isActive !== 'false',
     },
   });
 };
 
 exports.create = async (req, res) => {
-  const { name, description, isActive } = req.body;
-
-  if (!name || !name.trim()) {
-    req.flash('error', 'El nombre es obligatorio.');
-    return res.render('admin/commerce-types/create', {
-      title: 'Nuevo Tipo de Comercio',
-      commerceType: {
-        name: name || '',
-        description: description || '',
-        isActive: isActive === 'on',
-      },
-    });
-  }
-
   try {
-    const existingType = await CommerceType.findOne({ name: name.trim() }).lean();
-    if (existingType) {
-      req.flash('error', 'Ya existe un tipo de comercio con ese nombre.');
-      return res.render('admin/commerce-types/create', {
-        title: 'Nuevo Tipo de Comercio',
-        commerceType: {
-          name: name,
-          description: description || '',
-          isActive: isActive === 'on',
-        },
-      });
-    }
+    const formData = buildMultipartFormData(
+      {
+        name: req.body.name,
+        description: req.body.description,
+        isActive: req.body.isActive || 'false',
+      },
+      req.file ? [req.file] : []
+    );
 
-    await CommerceType.create({
-      name: name.trim(),
-      description: description ? description.trim() : '',
-      isActive: isActive === 'on',
+    const response = await apiRequestWithSession(req, '/admin/commerce-types', {
+      method: 'POST',
+      body: formData,
     });
 
-    req.flash('success', 'Tipo de comercio creado correctamente.');
-    res.redirect('/admin/commerce-types');
+    req.flash('success', response.message || 'Tipo de comercio creado correctamente.');
+    return res.redirect('/admin/commerce-types');
   } catch (error) {
-    console.error(error);
-    req.flash('error', 'No se pudo crear el tipo de comercio.');
-    res.redirect('/admin/commerce-types/create');
+    req.flash('formData', JSON.stringify(req.body));
+    return handleApiPageError(req, res, error, 'No se pudo crear el tipo de comercio.', '/admin/commerce-types/create');
   }
 };
 
 exports.editForm = async (req, res) => {
   try {
-    const commerceType = await CommerceType.findById(req.params.id).lean();
-
-    if (!commerceType) {
-      req.flash('error', 'Tipo de comercio no encontrado.');
-      return res.redirect('/admin/commerce-types');
-    }
+    const response = await apiRequestWithSession(req, `/admin/commerce-types/${req.params.id}`);
 
     res.render('admin/commerce-types/edit', {
       title: 'Editar Tipo de Comercio',
-      commerceType,
+      commerceType: {
+        ...mapCommerceType(response.data),
+        ...res.locals.formData,
+      },
     });
   } catch (error) {
-    console.error(error);
-    req.flash('error', 'No se pudo cargar el tipo de comercio.');
-    res.redirect('/admin/commerce-types');
+    return handleApiPageError(req, res, error, 'No se pudo cargar el tipo de comercio.', '/admin/commerce-types');
   }
 };
 
 exports.update = async (req, res) => {
-  const { name, description, isActive } = req.body;
-
-  if (!name || !name.trim()) {
-    req.flash('error', 'El nombre es obligatorio.');
-    return res.redirect(`/admin/commerce-types/${req.params.id}/edit`);
-  }
-
   try {
-    const commerceType = await CommerceType.findById(req.params.id);
+    const formData = buildMultipartFormData(
+      {
+        name: req.body.name,
+        description: req.body.description,
+        isActive: req.body.isActive || 'false',
+      },
+      req.file ? [req.file] : []
+    );
 
-    if (!commerceType) {
-      req.flash('error', 'Tipo de comercio no encontrado.');
-      return res.redirect('/admin/commerce-types');
-    }
+    const response = await apiRequestWithSession(req, `/admin/commerce-types/${req.params.id}`, {
+      method: 'PUT',
+      body: formData,
+    });
 
-    const duplicate = await CommerceType.findOne({
-      _id: { $ne: req.params.id },
-      name: name.trim(),
-    }).lean();
-
-    if (duplicate) {
-      req.flash('error', 'Ya existe otro tipo de comercio con ese nombre.');
-      return res.redirect(`/admin/commerce-types/${req.params.id}/edit`);
-    }
-
-    commerceType.name = name.trim();
-    commerceType.description = description ? description.trim() : '';
-    commerceType.isActive = isActive === 'on';
-
-    await commerceType.save();
-
-    req.flash('success', 'Tipo de comercio actualizado correctamente.');
-    res.redirect('/admin/commerce-types');
+    req.flash('success', response.message || 'Tipo de comercio actualizado correctamente.');
+    return res.redirect('/admin/commerce-types');
   } catch (error) {
-    console.error(error);
-    req.flash('error', 'No se pudo actualizar el tipo de comercio.');
-    res.redirect(`/admin/commerce-types/${req.params.id}/edit`);
+    req.flash('formData', JSON.stringify(req.body));
+    return handleApiPageError(req, res, error, 'No se pudo actualizar el tipo de comercio.', `/admin/commerce-types/${req.params.id}/edit`);
   }
 };
 
 exports.remove = async (req, res) => {
   try {
-    const commerceType = await CommerceType.findById(req.params.id);
+    const response = await apiRequestWithSession(req, `/admin/commerce-types/${req.params.id}`, {
+      method: 'DELETE',
+    });
 
-    if (!commerceType) {
-      req.flash('error', 'Tipo de comercio no encontrado.');
-      return res.redirect('/admin/commerce-types');
-    }
-
-    await commerceType.deleteOne();
-
-    req.flash('success', 'Tipo de comercio eliminado correctamente.');
-    res.redirect('/admin/commerce-types');
+    req.flash('success', response.message || 'Tipo de comercio eliminado correctamente.');
+    return res.redirect('/admin/commerce-types');
   } catch (error) {
-    console.error(error);
-    req.flash('error', 'No se pudo eliminar el tipo de comercio.');
-    res.redirect('/admin/commerce-types');
+    req.flash('error', getApiErrorMessage(error, 'No se pudo eliminar el tipo de comercio.'));
+    return res.redirect('/admin/commerce-types');
   }
 };

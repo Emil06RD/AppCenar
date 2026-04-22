@@ -94,26 +94,26 @@ const mongoIdParamRule = (field = 'id') => [
 
 const categoryRules = [
   body('name').trim().notEmpty().withMessage('El nombre es obligatorio'),
+  body('description').trim().notEmpty().withMessage('La descripcion es obligatoria'),
 ];
 
 const productRules = [
   body('name').trim().notEmpty().withMessage('El nombre es obligatorio'),
-  body('description').optional({ values: 'falsy' }).trim(),
+  body('description').trim().notEmpty().withMessage('La descripcion es obligatoria'),
   body('price')
     .notEmpty().withMessage('El precio es obligatorio')
-    .isFloat({ min: 0 }).withMessage('El precio debe ser un numero valido'),
-  body('stock')
-    .notEmpty().withMessage('El stock es obligatorio')
-    .isInt({ min: 0 }).withMessage('El stock debe ser un numero entero valido'),
+    .isFloat({ min: 0.01 }).withMessage('El precio debe ser un numero valido'),
   body('category')
     .notEmpty().withMessage('La categoria es obligatoria')
     .isMongoId().withMessage('La categoria seleccionada no es valida'),
 ];
 
 const addressRules = [
+  body('label').trim().notEmpty().withMessage('La etiqueta es obligatoria'),
   body('street').trim().notEmpty().withMessage('La calle es obligatoria'),
+  body('sector').trim().notEmpty().withMessage('El sector es obligatorio'),
   body('city').trim().notEmpty().withMessage('La ciudad es obligatoria'),
-  body('reference').optional({ values: 'falsy' }).trim(),
+  body('reference').trim().notEmpty().withMessage('La referencia es obligatoria'),
 ];
 
 const favoriteRules = [
