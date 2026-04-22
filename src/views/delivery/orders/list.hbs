@@ -1,0 +1,71 @@
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4 border-bottom pb-3">
+  <div>
+    <h1 class="fw-bold mb-0">
+      <i class="bi bi-bicycle text-warning me-2"></i>Pedidos asignados
+    </h1>
+    <p class="text-muted mb-0 small">Solo ves pedidos asignados a ti y en proceso.</p>
+  </div>
+  <a href="/delivery/home" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left me-1"></i>Volver
+  </a>
+</div>
+
+{{> alerts}}
+
+<div class="d-flex flex-column gap-3">
+  {{#if orders.length}}
+    {{#each orders}}
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+            <div>
+              <h2 class="h5 fw-semibold mb-1">Pedido #{{this._id}}</h2>
+              <div class="text-muted small">Estado: {{this.statusLabel}}</div>
+              <div class="text-muted small">Cliente: {{this.client.firstName}} {{this.client.lastName}}</div>
+              {{#if this.client.phone}}
+                <div class="text-muted small">Telefono: {{this.client.phone}}</div>
+              {{/if}}
+            </div>
+            <div class="text-md-end">
+              <div class="fw-semibold">Total: RD$ {{this.total}}</div>
+              <div class="text-muted small">Entrega en {{this.address.city}}</div>
+            </div>
+          </div>
+
+          <div class="small text-muted mb-3">
+            Direccion: {{this.address.street}}
+            {{#if this.address.reference}} · Referencia: {{this.address.reference}}{{/if}}
+          </div>
+
+          <ul class="list-group list-group-flush mb-3">
+            {{#each this.products}}
+              <li class="list-group-item px-0 d-flex justify-content-between">
+                <span>{{this.product.name}} x{{this.quantity}}</span>
+                <span>RD$ {{this.unitPrice}}</span>
+              </li>
+            {{/each}}
+          </ul>
+
+          <div class="d-flex gap-2">
+            <a href="/delivery/orders/{{this._id}}" class="btn btn-outline-warning fw-semibold">
+              Ver detalle
+            </a>
+            <form action="/delivery/orders/{{this._id}}/complete" method="POST">
+              <button type="submit" class="btn btn-warning fw-semibold">
+                Marcar como completado
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  {{else}}
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center py-5">
+        <i class="bi bi-bicycle display-5 text-muted d-block mb-3"></i>
+        <h2 class="h5 fw-semibold">No tienes pedidos asignados</h2>
+        <p class="text-muted mb-0">Cuando te asignen un pedido en proceso, aparecera aqui.</p>
+      </div>
+    </div>
+  {{/if}}
+</div>

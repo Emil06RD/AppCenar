@@ -1,0 +1,29 @@
+{{! Mensaje de éxito }}
+{{#if success}}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill me-1"></i> {{success}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+{{/if}}
+
+{{! Mensaje de error único }}
+{{#if error}}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-1"></i> {{error}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+{{/if}}
+
+{{! Lista de errores de validación (express-validator) }}
+{{#if errors.length}}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+    <strong>Corrige los siguientes errores:</strong>
+    <ul class="mb-0 mt-1">
+      {{#each errors}}
+        <li>{{this}}</li>
+      {{/each}}
+    </ul>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+{{/if}}

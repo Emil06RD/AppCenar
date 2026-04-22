@@ -1,0 +1,74 @@
+{{! Bienvenida }}
+<div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+  <div>
+    <h1 class="fw-bold mb-0">
+      <i class="bi bi-shop text-warning me-2"></i>Mi comercio
+    </h1>
+    <p class="text-muted mb-0 small">Panel de dueno · AppCenar</p>
+  </div>
+  <a href="/auth/logout" class="btn btn-outline-danger btn-sm">
+    <i class="bi bi-box-arrow-right me-1"></i>Cerrar sesion
+  </a>
+</div>
+
+{{> alerts}}
+
+{{! Opciones del comercio }}
+<div class="row g-4">
+
+  <div class="col-12 col-md-4">
+    <div class="card h-100 border-0 shadow-sm text-center p-3">
+      <div class="card-body">
+        <i class="bi bi-card-list display-4 text-warning mb-3 d-block"></i>
+        <h5 class="fw-semibold">Mis productos</h5>
+        <p class="text-muted small">Crea y administra tu catalogo de productos</p>
+        <a href="/commerce/products" class="btn btn-warning btn-sm fw-semibold mt-2">Ver productos</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <div class="card h-100 border-0 shadow-sm text-center p-3">
+      <div class="card-body">
+        <i class="bi bi-receipt display-4 text-warning mb-3 d-block"></i>
+        <h5 class="fw-semibold">Pedidos recibidos</h5>
+        <p class="text-muted small">Gestiona los pedidos entrantes en tiempo real</p>
+        <a href="/commerce/orders" class="btn btn-warning btn-sm fw-semibold mt-2">Ver pedidos</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <div class="card h-100 border-0 shadow-sm text-center p-3">
+      <div class="card-body">
+        <i class="bi bi-grid display-4 text-warning mb-3 d-block"></i>
+        <h5 class="fw-semibold">Categorias</h5>
+        <p class="text-muted small">Organiza tus productos en categorias</p>
+        <a href="/commerce/categories" class="btn btn-warning btn-sm fw-semibold mt-2">Ver categorias</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <div class="card h-100 border-0 shadow-sm text-center p-3">
+      <div class="card-body">
+        <i class="bi bi-clock-history display-4 text-warning mb-3 d-block"></i>
+        <h5 class="fw-semibold">Horario y datos</h5>
+        <p class="text-muted small">Edita el horario y la informacion del negocio</p>
+        <a href="/commerce/profile" class="btn btn-warning btn-sm fw-semibold mt-2">Editar comercio</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <div class="card h-100 border-0 shadow-sm text-center p-3">
+      <div class="card-body">
+        <i class="bi bi-person-gear display-4 text-warning mb-3 d-block"></i>
+        <h5 class="fw-semibold">Mi perfil</h5>
+        <p class="text-muted small">Actualiza tus datos de acceso</p>
+        <a href="/commerce/profile" class="btn btn-warning btn-sm fw-semibold mt-2">Ver perfil</a>
+      </div>
+    </div>
+  </div>
+
+</div>

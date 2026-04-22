@@ -1,0 +1,49 @@
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4 border-bottom pb-3">
+  <div>
+    <h1 class="fw-bold mb-0"><i class="bi bi-receipt text-warning me-2"></i>Detalle del pedido</h1>
+    <p class="text-muted mb-0 small">Pedido #{{order._id}} · {{order.statusLabel}}</p>
+  </div>
+  <a href="/commerce/orders" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left me-1"></i>Volver
+  </a>
+</div>
+
+{{> alerts}}
+
+<div class="row g-4">
+  <div class="col-12 col-lg-8">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h2 class="h5 fw-semibold mb-3">Productos</h2>
+        <ul class="list-group list-group-flush">
+          {{#each order.products}}
+            <li class="list-group-item px-0 d-flex justify-content-between">
+              <span>{{this.product.name}} x{{this.quantity}}</span>
+              <span>RD$ {{this.unitPrice}}</span>
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h2 class="h5 fw-semibold mb-3">Resumen</h2>
+        <p class="mb-1"><strong>Cliente:</strong> {{order.client.firstName}} {{order.client.lastName}}</p>
+        {{#if order.client.phone}}<p class="mb-1"><strong>Telefono:</strong> {{order.client.phone}}</p>{{/if}}
+        {{#if order.client.email}}<p class="mb-1"><strong>Email:</strong> {{order.client.email}}</p>{{/if}}
+        <p class="mb-1"><strong>Fecha:</strong> {{order.createdAtLabel}}</p>
+        <p class="mb-1"><strong>Total:</strong> RD$ {{order.total}}</p>
+        <p class="mb-1"><strong>Subtotal:</strong> RD$ {{order.subtotal}}</p>
+        <p class="mb-3"><strong>ITBIS:</strong> RD$ {{order.itbis}}</p>
+        <p class="mb-3"><strong>Entrega:</strong> {{order.address.street}}, {{order.address.city}}</p>
+        {{#if order.isPending}}
+          <form action="/commerce/orders/{{order._id}}/process" method="POST">
+            <button type="submit" class="btn btn-warning fw-semibold w-100">Asignar delivery y poner en proceso</button>
+          </form>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,66 @@
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4 border-bottom pb-3">
+  <div>
+    <h1 class="fw-bold mb-0">
+      <i class="bi bi-geo-alt text-warning me-2"></i>Mis direcciones
+    </h1>
+    <p class="text-muted mb-0 small">Gestiona tus direcciones de entrega.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="/client/home" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i>Volver
+    </a>
+    <a href="/client/addresses/create" class="btn btn-warning btn-sm fw-semibold">
+      <i class="bi bi-plus-circle me-1"></i>Nueva direccion
+    </a>
+  </div>
+</div>
+
+{{> alerts}}
+
+<div class="row g-4">
+  {{#if addresses.length}}
+    {{#each addresses}}
+      <div class="col-12 col-md-6">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <h2 class="h5 fw-semibold mb-0">{{this.street}}</h2>
+              {{#if this.isDefault}}
+                <span class="badge text-bg-success">Predeterminada</span>
+              {{/if}}
+            </div>
+            <p class="text-muted mb-2">{{this.city}}</p>
+            <p class="text-muted small mb-4">
+              {{#if this.reference}}
+                Referencia: {{this.reference}}
+              {{else}}
+                Sin referencia adicional.
+              {{/if}}
+            </p>
+            <div class="d-flex gap-2 mt-auto">
+              <a href="/client/addresses/{{this._id}}/edit" class="btn btn-outline-warning flex-grow-1">
+                Editar
+              </a>
+              <form action="/client/addresses/{{this._id}}/delete" method="POST">
+                <button type="submit" class="btn btn-outline-danger" onclick="return confirm('¿Eliminar esta direccion?')">
+                  Eliminar
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  {{else}}
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+          <i class="bi bi-geo-alt display-5 text-muted d-block mb-3"></i>
+          <h2 class="h5 fw-semibold">Aun no tienes direcciones registradas</h2>
+          <p class="text-muted mb-3">Agrega una direccion para usarla en tus pedidos.</p>
+          <a href="/client/addresses/create" class="btn btn-warning">Crear direccion</a>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+</div>

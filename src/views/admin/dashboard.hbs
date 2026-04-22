@@ -1,0 +1,92 @@
+<div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+  <div>
+    <h1 class="fw-bold mb-0">
+      <i class="bi bi-shield-check text-warning me-2"></i>Panel de administracion
+    </h1>
+    <p class="text-muted mb-0 small">Bienvenido, {{session.userName}} · AppCenar Admin</p>
+  </div>
+  <a href="/auth/logout" class="btn btn-outline-danger btn-sm">
+    <i class="bi bi-box-arrow-right me-1"></i>Cerrar sesion
+  </a>
+</div>
+
+{{> alerts}}
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card border-0 bg-warning bg-opacity-10 text-center p-3">
+      <i class="bi bi-people fs-2 text-warning"></i>
+      <div class="fw-bold fs-4 mt-1">{{stats.totalUsers}}</div>
+      <div class="text-muted small">Usuarios</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-0 bg-warning bg-opacity-10 text-center p-3">
+      <i class="bi bi-shop fs-2 text-warning"></i>
+      <div class="fw-bold fs-4 mt-1">{{stats.totalCommerces}}</div>
+      <div class="text-muted small">Comercios</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-0 bg-warning bg-opacity-10 text-center p-3">
+      <i class="bi bi-bag-check fs-2 text-warning"></i>
+      <div class="fw-bold fs-4 mt-1">{{stats.totalOrders}}</div>
+      <div class="text-muted small">Pedidos</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-0 bg-warning bg-opacity-10 text-center p-3">
+      <i class="bi bi-hourglass-split fs-2 text-warning"></i>
+      <div class="fw-bold fs-4 mt-1">{{stats.pendingCommerces}}</div>
+      <div class="text-muted small">Comercios pendientes</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-12 col-md-4">
+    <div class="card h-100 border-0 shadow-sm text-center p-3">
+      <div class="card-body">
+        <i class="bi bi-people display-4 text-warning mb-3 d-block"></i>
+        <h5 class="fw-semibold">Gestion de usuarios</h5>
+        <p class="text-muted small">Ver, activar, desactivar y aprobar comercios.</p>
+        <a href="/admin/users" class="btn btn-warning btn-sm fw-semibold mt-2">Gestionar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <div class="card h-100 border-0 shadow-sm text-center p-3">
+      <div class="card-body">
+        <i class="bi bi-person-badge display-4 text-warning mb-3 d-block"></i>
+        <h5 class="fw-semibold">Administradores</h5>
+        <p class="text-muted small">Crea, edita o elimina cuentas administrativas.</p>
+        <a href="/admin/administrators" class="btn btn-warning btn-sm fw-semibold mt-2">Gestionar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <div class="card h-100 border-0 shadow-sm text-center p-3">
+      <div class="card-body">
+        <i class="bi bi-tags display-4 text-warning mb-3 d-block"></i>
+        <h5 class="fw-semibold">Tipos de comercio</h5>
+        <p class="text-muted small">Crear, editar y eliminar los tipos de comercio disponibles.</p>
+        <a href="/admin/commerce-types" class="btn btn-warning btn-sm fw-semibold mt-2">Gestionar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mt-0">
+  <div class="col-12 col-md-4">
+    <div class="card h-100 border-0 shadow-sm text-center p-3">
+      <div class="card-body">
+        <i class="bi bi-gear display-4 text-warning mb-3 d-block"></i>
+        <h5 class="fw-semibold">Configuracion</h5>
+        <p class="text-muted small">Configura el ITBIS global del sistema.</p>
+        <a href="/admin/configuration" class="btn btn-warning btn-sm fw-semibold mt-2">Configurar</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4 border-bottom pb-3">
+  <div>
+    <h1 class="fw-bold mb-0"><i class="bi bi-shop text-warning me-2"></i>Editar comercio</h1>
+    <p class="text-muted mb-0 small">Actualiza los datos del negocio y del usuario propietario.</p>
+  </div>
+  <a href="/commerce/home" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left me-1"></i>Volver
+  </a>
+</div>
+
+{{> alerts}}
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <form action="/commerce/profile" method="POST" class="row g-3">
+      <div class="col-12 col-md-6">
+        <label class="form-label fw-semibold" for="commerceName">Nombre del comercio</label>
+        <input class="form-control" id="commerceName" name="commerceName" value="{{profile.commerceName}}" required />
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label fw-semibold" for="commerceType">Tipo de comercio</label>
+        <select class="form-select" id="commerceType" name="commerceType" required>
+          <option value="">Selecciona una opcion</option>
+          {{#each commerceTypes}}
+            <option value="{{this._id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label fw-semibold" for="openingTime">Apertura</label>
+        <input type="time" class="form-control" id="openingTime" name="openingTime" value="{{profile.openingTime}}" required />
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label fw-semibold" for="closingTime">Cierre</label>
+        <input type="time" class="form-control" id="closingTime" name="closingTime" value="{{profile.closingTime}}" required />
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label fw-semibold" for="firstName">Nombre propietario</label>
+        <input class="form-control" id="firstName" name="firstName" value="{{profile.firstName}}" required />
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label fw-semibold" for="lastName">Apellido propietario</label>
+        <input class="form-control" id="lastName" name="lastName" value="{{profile.lastName}}" required />
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label fw-semibold" for="userName">Usuario</label>
+        <input class="form-control" id="userName" name="userName" value="{{profile.userName}}" required />
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label fw-semibold" for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="email" value="{{profile.email}}" required />
+      </div>
+      <div class="col-12">
+        <label class="form-label fw-semibold" for="phone">Telefono</label>
+        <input class="form-control" id="phone" name="phone" value="{{profile.phone}}" required />
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-warning fw-semibold">Guardar cambios</button>
+      </div>
+    </form>
+  </div>
+</div>

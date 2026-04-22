@@ -1,0 +1,67 @@
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4 border-bottom pb-3">
+  <div>
+    <h1 class="fw-bold mb-0">
+      <i class="bi bi-receipt text-warning me-2"></i>Pedidos pendientes
+    </h1>
+    <p class="text-muted mb-0 small">Acepta pedidos y asigna un repartidor disponible automaticamente.</p>
+  </div>
+  <a href="/commerce/home" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left me-1"></i>Volver
+  </a>
+</div>
+
+{{> alerts}}
+
+<div class="d-flex flex-column gap-3">
+  {{#if orders.length}}
+    {{#each orders}}
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+            <div>
+              <h2 class="h5 fw-semibold mb-1">Pedido #{{this._id}}</h2>
+              <div class="text-muted small">Cliente: {{this.client.firstName}} {{this.client.lastName}}</div>
+              <div class="text-muted small">Estado: {{this.statusLabel}}</div>
+            </div>
+            <div class="text-md-end">
+              <div class="fw-semibold">Total: RD$ {{this.total}}</div>
+              <div class="text-muted small">Subtotal: RD$ {{this.subtotal}} · ITBIS: RD$ {{this.itbis}}</div>
+            </div>
+          </div>
+
+          <div class="small text-muted mb-3">
+            Entrega en: {{this.address.street}}, {{this.address.city}}
+          </div>
+
+          <ul class="list-group list-group-flush mb-3">
+            {{#each this.products}}
+              <li class="list-group-item px-0 d-flex justify-content-between">
+                <span>{{this.product.name}} x{{this.quantity}}</span>
+                <span>RD$ {{this.unitPrice}}</span>
+              </li>
+            {{/each}}
+          </ul>
+
+          <div class="d-flex gap-2">
+            <a href="/commerce/orders/{{this._id}}" class="btn btn-outline-warning fw-semibold">
+              Ver detalle
+            </a>
+            <form action="/commerce/orders/{{this._id}}/process" method="POST">
+              <button type="submit" class="btn btn-warning fw-semibold">
+                Asignar delivery y poner en proceso
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  {{else}}
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center py-5">
+        <i class="bi bi-receipt display-5 text-muted d-block mb-3"></i>
+        <h2 class="h5 fw-semibold">No hay pedidos pendientes</h2>
+        <p class="text-muted mb-0">Cuando entren nuevos pedidos pendientes, apareceran aqui.</p>
+      </div>
+    </div>
+  {{/if}}
+</div>

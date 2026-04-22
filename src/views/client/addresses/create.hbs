@@ -1,0 +1,53 @@
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+    <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+      <div>
+        <h1 class="fw-bold mb-0">
+          <i class="bi bi-plus-circle text-warning me-2"></i>Nueva direccion
+        </h1>
+        <p class="text-muted mb-0 small">Registra una nueva direccion de entrega.</p>
+      </div>
+      <a href="/client/addresses" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Volver
+      </a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        {{> alerts}}
+
+        <form action="/client/addresses/create" method="POST">
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="street" class="form-label">Calle</label>
+              <input type="text" id="street" name="street" class="form-control" required />
+            </div>
+
+            <div class="col-12">
+              <label for="city" class="form-label">Ciudad</label>
+              <input type="text" id="city" name="city" class="form-control" required />
+            </div>
+
+            <div class="col-12">
+              <label for="reference" class="form-label">Referencia</label>
+              <textarea id="reference" name="reference" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="isDefault" name="isDefault" />
+                <label class="form-check-label" for="isDefault">
+                  Marcar como direccion predeterminada
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-warning fw-semibold">Guardar direccion</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
