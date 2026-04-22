@@ -1,4 +1,4 @@
-const API_BASE_URL = (process.env.APICENAR_API_BASE_URL || 'http://localhost:4000/api').replace(/\/+$/, '');
+const API_BASE_URL = (process.env.API_BASE_URL || '').replace(/\/+$/, '');
 
 class ApiRequestError extends Error {
   constructor(status, message, errors = [], payload = null) {
@@ -11,8 +11,12 @@ class ApiRequestError extends Error {
 }
 
 function buildUrl(pathname, query = {}) {
+  if (!API_BASE_URL) {
+    throw new Error('API_BASE_URL is not configured');
+  }
+
   const basePath = pathname.startsWith('/') ? pathname : `/${pathname}`;
-  const url = new URL(`${API_BASE_URL}${basePath}`);
+  const url = new URL(`${API_BASE_URL}/api${basePath}`);
 
   Object.entries(query).forEach(([key, value]) => {
     if (value === undefined || value === null || value === '') return;
@@ -65,24 +69,43 @@ async function apiRequest(pathname, options = {}) {
     requestHeaders.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(buildUrl(pathname, query), {
-    method,
-    headers: requestHeaders,
-    body: requestBody,
-  });
+  try {
+    const response = await fetch(buildUrl(pathname, query), {
+      method,
+      headers: requestHeaders,
+      body: requestBody,
+    });
 
-  const payload = await parseResponse(response);
+    const payload = await parseResponse(response);
 
-  if (!response.ok) {
-    throw new ApiRequestError(
-      response.status,
-      payload.message || 'No se pudo completar la solicitud.',
-      payload.errors || [],
-      payload
-    );
+    if (!response.ok) {
+      console.error('[api] Request failed', {
+        method,
+        pathname,
+        status: response.status,
+        payload,
+      });
+
+      throw new ApiRequestError(
+        response.status,
+        payload.message || 'No se pudo completar la solicitud.',
+        payload.errors || [],
+        payload
+      );
+    }
+
+    return payload;
+  } catch (error) {
+    if (!(error instanceof ApiRequestError)) {
+      console.error('[api] Network or configuration error', {
+        method,
+        pathname,
+        message: error.message,
+      });
+    }
+
+    throw error;
   }
-
-  return payload;
 }
 
 function normalizeRole(roleValue) {

@@ -9,7 +9,7 @@ app.locals.db = {
 };
 
 app.listen(PORT, async () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
 
   const dbConnected = await connectDB();
   app.locals.db.connected = dbConnected;
